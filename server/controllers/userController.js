@@ -2,9 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../database/index");
 const User = db.User;
+require('dotenv').config();
 
-// jwt sectrt
-const JWT_SECRET = "secretKey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 //register
 const register = async (req, res) => {

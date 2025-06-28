@@ -2,10 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./database/index");
 const cookieParser = require("cookie-parser");
+require('dotenv').config();
 
 
-
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const app = express();
 
 

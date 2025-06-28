@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = "secretKey";
+require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 const authMiddleware = (req, res, next) => {
   const token = req.cookies.token;
 
-  console.log("Token from cookie:", token); // DEBUG
+  console.log("Token from cookie:", token); 
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized - No token." });
