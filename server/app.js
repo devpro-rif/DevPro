@@ -15,6 +15,11 @@ app.use(cors({
   credentials: true
 }));
 
+const PostRouter = require("./routes/postRoutes");
+app.use("/posts",PostRouter);
+
+
+
 //routes connection
 const userRoutes = require("./routes/userRoutes")
 
