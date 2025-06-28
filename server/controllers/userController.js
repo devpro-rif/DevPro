@@ -2,9 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../database/index");
 const User = db.User;
+require('dotenv').config();
 
-// jwt sectrt
-const JWT_SECRET = "secretKey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 //register
 const register = async (req, res) => {
@@ -163,11 +163,55 @@ const updatePassword = async (req, res) => {
   }
 };
 
+// user contribution 
+
+const getUserContributions = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const contributions = await db.Contribution.findAll({
+      where: { UserId: userId },
+      include: {
+        model: db.Campaign,
+        attributes: ['name'],
+      },
+      attributes: ['id', 'amount', 'createdAt'],
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!contributions || contributions.length === 0) {
+      return res.status(200).json({
+        totalAmount: 0,
+        contributions: [],
+      });
+    }
+
+    const totalAmount = contributions.reduce((sum, c) => sum + c.amount, 0);
+
+    const formattedContributions = contributions.map((c) => ({
+      id: c.id,
+      amount: c.amount,
+      campaignName: c.Campaign.name,
+      date: c.createdAt,
+    }));
+
+    res.status(200).json({
+      totalAmount,
+      contributions: formattedContributions,
+    });
+  } catch (error) {
+    console.error("Error fetching contributions:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
+
 module.exports = {
   register,
   login,
   logout,
   updateUsername,
   updatePassword,
+  getUserContributions
 };
 
