@@ -14,8 +14,13 @@ db.Campaign = require("../models/campaignModel")(sequelize, DataTypes);
 db.Contribution = require("../models/contributionModel")(sequelize, DataTypes);
 db.CommunityCampaign = require("../models/communityCampaignModel")(sequelize, DataTypes);
 db.CommunityMemberModel = require("../models/communityMemberModel")(sequelize, DataTypes);
-
+db.Post = require("../models/postModel")(sequelize, DataTypes);
 // db.User.hasMany(db.Community);
+
+
+db.User.hasMany(db.Post);
+db.Post.belongsTo(db.User);
+
 
 db.Community.belongsToMany(db.User, { through: db.CommunityMemberModel });
 db.User.belongsToMany(db.Community, { through: db.CommunityMemberModel });
