@@ -21,6 +21,8 @@ db.Post = require("../models/postModel")(sequelize, DataTypes);
 db.User.hasMany(db.Post);
 db.Post.belongsTo(db.User);
 
+db.Community.hasMany(db.Post);
+db.Post.belongsTo(db.Community);
 
 db.Community.belongsToMany(db.User, { through: db.CommunityMemberModel });
 db.User.belongsToMany(db.Community, { through: db.CommunityMemberModel });
