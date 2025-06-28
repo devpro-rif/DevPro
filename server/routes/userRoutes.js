@@ -13,13 +13,13 @@ router.get("/profile", auth, (req, res) => {
     res.json({ message: "Welcome", userId: req.user.id });
 });
 
+
 //update username
 router.put("/update-username", auth, updateUsername);
 
 //update password
 
 router.put("/update-password", auth, updatePassword);
-
 
 
 module.exports = router;
