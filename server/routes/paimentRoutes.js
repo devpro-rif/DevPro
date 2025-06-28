@@ -1,9 +1,9 @@
 const express = require('express');
-const {Add , verify} = require('../controllers/flouciController');
-const Router = express.Router();
+const {Add , verify} = require('../controllers/paimentControlleur');
+const RouterPayment = express.Router();
 
-Router.post('/payment', Add); 
-Router.post('/verify/:paymentId', verify); 
+RouterPayment.post('/payment', Add); 
+RouterPayment.post('/verify/:paymentId', verify); 
 
 
-module.exports = Router;
+module.exports = RouterPayment;
