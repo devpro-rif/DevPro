@@ -76,7 +76,7 @@ const CheckoutForm = () => {
 
   return (
     <div className={styles.wrapper}>
-      <h1>  complete    your payment</h1>
+      <h1>  Complete your payment</h1>
       <h2 className={styles.heading}>Checkout</h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
