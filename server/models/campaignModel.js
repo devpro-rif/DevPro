@@ -1,10 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
   const Campaign = sequelize.define("Campaign", {
-    name: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    objective: {
       type: DataTypes.STRING,
       allowNull: false,
     },

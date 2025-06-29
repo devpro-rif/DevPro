@@ -18,7 +18,9 @@ app.use(cors({
 const PostRouter = require("./routes/postRoutes");
 app.use("/posts",PostRouter);
 
-
+// Campaign routes
+const CampaignRouter = require("./routes/campaignRoutes");
+app.use("/campaigns", CampaignRouter);
 
 //routes connection
 const userRoutes = require("./routes/userRoutes")
