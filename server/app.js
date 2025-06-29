@@ -22,6 +22,10 @@ app.use("/posts",PostRouter);
 const CampaignRouter = require("./routes/campaignRoutes");
 app.use("/campaigns", CampaignRouter);
 
+// Contribution routes
+const ContributionRouter = require("./routes/contributionRoutes");
+app.use("/contributions", ContributionRouter);
+
 //routes connection
 const userRoutes = require("./routes/userRoutes")
 

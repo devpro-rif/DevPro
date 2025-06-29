@@ -6,8 +6,10 @@ const {
     getAllCampaigns, 
     getCampaignsByUser, 
     getCampaignsByCommunity,
-    linkCampaignToCommunities,
-    deleteCampaign 
+    deleteCampaign,
+    getCampaignsByStatus,
+    getCampaignStats,
+    refreshAllCampaignStatuses
 } = require("../controllers/campaignController");
 const auth = require("../middleware/authMiddleware");
 const routerCampaign = express.Router();
@@ -26,14 +28,20 @@ routerCampaign.get("/campaigns/user/:id_user", getCampaignsByUser);
 // Get campaigns by community
 routerCampaign.get("/campaigns/community/:id_community", getCampaignsByCommunity);
 
+// Get campaigns by status
+routerCampaign.get("/campaigns/status/:status", getCampaignsByStatus);
+
+// Get campaign statistics
+routerCampaign.get("/campaign/:id_campaign/stats", getCampaignStats);
+
 // Create campaign (requires authentication)
 routerCampaign.post("/campaign/create", auth, createCampaign);
 
 // Update campaign (requires authentication)
 routerCampaign.put("/campaign/update/:id_campaign", auth, updateCampaign);
 
-// Link campaign to communities (requires authentication)
-routerCampaign.post("/campaign/:id_campaign/link-communities", auth, linkCampaignToCommunities);
+// Refresh all campaign statuses (requires authentication)
+routerCampaign.put("/campaigns/refresh-statuses", auth, refreshAllCampaignStatuses);
 
 // Delete campaign (requires authentication)
 routerCampaign.delete("/campaign/delete/:id_campaign", auth, deleteCampaign);
