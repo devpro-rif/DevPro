@@ -3,6 +3,8 @@ const User = db.User;
 const Campaign = db.Campaign;
 const Community = db.Community;
 const CommunityCampaign = db.CommunityCampaign;
+const Contribution = db.Contribution;
+const { refreshAllCampaignStatuses, getCampaignStats: getCampaignStatsUtil } = require('../utils/campaignUtils');
 
 // Campaign actions
 
@@ -13,6 +15,32 @@ const createCampaign = async (req, res) => {
 
     if (!title || !description || !objective || !goalAmount || !image || !deadline) {
         return res.status(400).json({ message: "All campaign fields are required." });
+    }
+
+    // Validate goal amount
+    if (goalAmount <= 0) {
+        return res.status(400).json({ message: "Goal amount must be greater than 0." });
+    }
+
+    // Validate deadline
+    const currentDate = new Date();
+    const deadlineDate = new Date(deadline);
+    
+    // Check if deadline is in the past
+    if (deadlineDate <= currentDate) {
+        return res.status(400).json({ 
+            message: "Campaign deadline must be set in the future. Please select a future date." 
+        });
+    }
+
+    // Check if deadline is too far in the future (optional: limit to 2 years)
+    const twoYearsFromNow = new Date();
+    twoYearsFromNow.setFullYear(twoYearsFromNow.getFullYear() + 2);
+    
+    if (deadlineDate > twoYearsFromNow) {
+        return res.status(400).json({ 
+            message: "Campaign deadline cannot be more than 2 years in the future." 
+        });
     }
 
     try {
@@ -26,8 +54,10 @@ const createCampaign = async (req, res) => {
             description: description,
             objective: objective,
             goalAmount: goalAmount,
+            currentAmount: 0,
+            status: 'active',
             image: image,
-            deadline: deadline,
+            deadline: deadlineDate,
             UserId: user_id,
         });
 
@@ -58,12 +88,40 @@ const createCampaign = async (req, res) => {
 // Update campaign
 const updateCampaign = async (req, res) => {
     const campaign_id = req.params.id_campaign;
-    const { title, description, objective, goalAmount, image, deadline, communityIds } = req.body;
+    const { title, description, objective, goalAmount, image, deadline, communityIds, status } = req.body;
 
     try {
         const this_campaign = await Campaign.findByPk(campaign_id);
         if (!this_campaign) {
             return res.status(404).json({ message: "Campaign not found." });
+        }
+
+        // Validate goal amount if provided
+        if (goalAmount !== undefined && goalAmount <= 0) {
+            return res.status(400).json({ message: "Goal amount must be greater than 0." });
+        }
+
+        // Validate deadline if provided
+        if (deadline) {
+            const currentDate = new Date();
+            const deadlineDate = new Date(deadline);
+            
+            // Check if deadline is in the past
+            if (deadlineDate <= currentDate) {
+                return res.status(400).json({ 
+                    message: "Campaign deadline must be set in the future. Please select a future date." 
+                });
+            }
+
+            // Check if deadline is too far in the future (optional: limit to 2 years)
+            const twoYearsFromNow = new Date();
+            twoYearsFromNow.setFullYear(twoYearsFromNow.getFullYear() + 2);
+            
+            if (deadlineDate > twoYearsFromNow) {
+                return res.status(400).json({ 
+                    message: "Campaign deadline cannot be more than 2 years in the future." 
+                });
+            }
         }
 
         // Update only provided fields
@@ -72,17 +130,20 @@ const updateCampaign = async (req, res) => {
         if (objective) this_campaign.objective = objective;
         if (goalAmount) this_campaign.goalAmount = goalAmount;
         if (image) this_campaign.image = image;
-        if (deadline) this_campaign.deadline = deadline;
+        if (deadline) this_campaign.deadline = new Date(deadline);
+        if (status && ['active', 'completed', 'expired', 'cancelled'].includes(status)) {
+            this_campaign.status = status;
+        }
 
-        const updated_campaign = await this_campaign.save();
+        await this_campaign.save();
 
         // Update community associations if provided
         if (communityIds) {
-            await updated_campaign.setCommunities(communityIds);
+            await this_campaign.setCommunities(communityIds);
         }
 
         // Fetch the updated campaign with communities
-        const campaignWithCommunities = await Campaign.findByPk(updated_campaign.id, {
+        const campaignWithCommunities = await Campaign.findByPk(this_campaign.id, {
             include: [{
                 model: Community,
                 through: { attributes: [] },
@@ -189,7 +250,7 @@ const getCampaignsByCommunity = async (req, res) => {
             include: [{
                 model: Campaign,
                 through: { attributes: [] },
-                attributes: ['id', 'title', 'description', 'objective', 'goalAmount', 'image', 'deadline', 'createdAt', 'updatedAt', 'UserId']
+                attributes: ['id', 'title', 'description', 'objective', 'goalAmount', 'currentAmount', 'status', 'image', 'deadline', 'createdAt', 'updatedAt', 'UserId']
             }]
         });
 
@@ -199,49 +260,10 @@ const getCampaignsByCommunity = async (req, res) => {
 
         return res.status(200).json({
             message: "Community campaigns:",
-            community: {
-                id: community.id,
-                name: community.name,
-                campaigns: community.Campaigns
-            }
+            community: community
         });
     } catch (error) {
         console.error("Error getting community campaigns:", error);
-        res.status(500).json({ message: "Server error." });
-    }
-};
-
-// Link campaign to communities
-const linkCampaignToCommunities = async (req, res) => {
-    const campaign_id = req.params.id_campaign;
-    const { communityIds } = req.body;
-
-    if (!communityIds || !Array.isArray(communityIds)) {
-        return res.status(400).json({ message: "Community IDs array is required." });
-    }
-
-    try {
-        const campaign = await Campaign.findByPk(campaign_id);
-        if (!campaign) {
-            return res.status(404).json({ message: "Campaign not found." });
-        }
-
-        await campaign.setCommunities(communityIds);
-
-        const updatedCampaign = await Campaign.findByPk(campaign_id, {
-            include: [{
-                model: Community,
-                through: { attributes: [] },
-                attributes: ['id', 'name', 'description', 'image', 'category']
-            }]
-        });
-
-        res.status(200).json({
-            message: "Campaign linked to communities successfully",
-            campaign: updatedCampaign
-        });
-    } catch (error) {
-        console.error("Error linking campaign to communities:", error);
         res.status(500).json({ message: "Server error." });
     }
 };
@@ -264,6 +286,70 @@ const deleteCampaign = async (req, res) => {
     }
 };
 
+// Get campaigns by status
+const getCampaignsByStatus = async (req, res) => {
+    const status = req.params.status;
+
+    if (!['active', 'completed', 'expired', 'cancelled'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status. Must be 'active', 'completed', 'expired', or 'cancelled'." });
+    }
+
+    try {
+        const campaigns = await Campaign.findAll({
+            where: { status: status },
+            include: [{
+                model: Community,
+                through: { attributes: [] },
+                attributes: ['id', 'name', 'description', 'image', 'category']
+            }]
+        });
+
+        if (!campaigns || campaigns.length === 0) {
+            return res.status(404).json({ message: `No ${status} campaigns found.` });
+        }
+
+        return res.status(200).json({
+            message: `${status.charAt(0).toUpperCase() + status.slice(1)} campaigns:`,
+            campaigns: campaigns
+        });
+    } catch (error) {
+        console.error("Error getting campaigns by status:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+
+// Get campaign statistics
+const getCampaignStats = async (req, res) => {
+    const campaign_id = req.params.id_campaign;
+
+    try {
+        const stats = await getCampaignStatsUtil(campaign_id);
+        
+        res.status(200).json({
+            message: "Campaign statistics:",
+            ...stats
+        });
+    } catch (error) {
+        console.error("Error getting campaign statistics:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+
+// Refresh all campaign statuses
+const refreshAllCampaignStatusesController = async (req, res) => {
+    try {
+        const result = await refreshAllCampaignStatuses();
+        
+        res.status(200).json({
+            message: "All campaign statuses refreshed successfully",
+            ...result
+        });
+    } catch (error) {
+        console.error("Error refreshing campaign statuses:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+
 module.exports = {
     createCampaign,
     updateCampaign,
@@ -271,6 +357,8 @@ module.exports = {
     getAllCampaigns,
     getCampaignsByUser,
     getCampaignsByCommunity,
-    linkCampaignToCommunities,
-    deleteCampaign
+    deleteCampaign,
+    getCampaignsByStatus,
+    getCampaignStats,
+    refreshAllCampaignStatuses: refreshAllCampaignStatusesController
 }; 

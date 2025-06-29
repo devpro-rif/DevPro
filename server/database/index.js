@@ -62,13 +62,13 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
-/* sequelize
-  .sync({ force: true })
+sequelize
+  .sync({ alter: true })
   .then(() => {
-    console.log("Database & tables created!");
+    console.log("Database & tables synchronized!");
   })
   .catch((error) => {
-    console.error("Error creating database & tables:", error);
-//   });  */
+    console.error("Error synchronizing database & tables:", error);
+   });  
 
 module.exports = db;
