@@ -1,14 +1,14 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PaymentPage from './pages/PaymentPage';
 
-import './App.css'
+const App = () => (
+  <Router>
+    <Routes>
+      <Route path="/payment" element={<PaymentPage />} />
+  
+    </Routes>
+  </Router>
+);
 
-function App() {
-
-
-  return (
-    <>
-      DevPro frontend
-    </>
-  )
-}
-
-export default App
+export default App;
