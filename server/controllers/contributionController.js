@@ -111,7 +111,7 @@ const getContributionsByUser = async (req, res) => {
         console.error("Error getting user contributions:", error);
         res.status(500).json({ message: "Server error." });
     }
-};
+}; 
 
 // Get total contributions for a campaign
 const getCampaignTotal = async (req, res) => {

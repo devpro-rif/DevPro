@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import './Auth.css'; 
+import { registerUser } from '../services/authService'; 
+import './Auth.css';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -23,22 +23,15 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       return setMessage("Passwords do not match.");
     }
 
     try {
       const { username, email, password, profileImage } = formData;
-
-      const response = await axios.post(
-        'http://localhost:4000/api/users/register',
-        { username, email, password, profileImage },
-        { withCredentials: true }
-      );
-
-      setMessage(response.data.message);
-      console.log(response.data.user);
+      const data = await registerUser({ username, email, password, profileImage });
+      setMessage(data.message);
+      console.log(data.user);
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.message);
