@@ -28,12 +28,14 @@ const CheckoutForm = () => {
 
 
   useEffect(() => {
+
     axios
       .post('http://localhost:4000/api/paiment/create-payment-intent', {
-        amount: 5000,  
+        amount: 500,  
       })
       .then(res => setClientSecret(res.data.clientSecret))
       .catch(()  => setStatus({ success: false, error: 'Failed to initialize payment.' }));
+      console.log('serct:',clientSecret)
   }, []);
 
   const handleChange = e =>
@@ -121,6 +123,7 @@ const CheckoutForm = () => {
         >
           {loading ? 'Processing…' : 'Pay $50'}
         </button>
+        
       </form>
 
 

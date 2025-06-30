@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { loginUser } from '../services/authService'; 
 import './Auth.css';
 
 function Login() {
@@ -10,13 +10,9 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        'http://localhost:4000/api/users/login',
-        { email, password },
-        { withCredentials: true } 
-      );
-      setMessage(response.data.message);
-      console.log(response.data.user); // later we decide eaiter to store in local storage or what approach we will use
+      const data = await loginUser(email, password);
+      setMessage(data.message);
+      console.log(data.user); // later we decide eaiter to store in local storage or what approach we will use
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.message);
