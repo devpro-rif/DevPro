@@ -70,5 +70,5 @@ sequelize
 //   .catch((error) => {
 //     console.error("Error synchronizing database & tables:", error);
 //    });  
-
+ 
 module.exports = db;

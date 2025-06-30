@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require("../middleware/authMiddleware")
 const communityController = require('../controllers/communityController');
 
 // Create a new community
@@ -16,5 +17,9 @@ router.put('/:id', communityController.updateCommunity);
 
 // Delete a community
 router.delete('/:id', communityController.deleteCommunity);
+
+// get user communities 
+
+router.get("/user/communities", auth , communityController.getUserCommunities)
 
 module.exports = router; 
