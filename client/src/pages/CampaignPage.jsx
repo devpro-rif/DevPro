@@ -5,8 +5,10 @@ const API_BASE = 'http://localhost:4000/campaigns'; // Updated to match correct 
 
 const CampaignPage = () => {
   const [campaigns, setCampaigns] = useState([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -21,10 +23,15 @@ const CampaignPage = () => {
 
   // Fetch campaigns
   useEffect(() => {
-    fetch(`${API_BASE}/campaigns/all`)
+    fetch(`${API_BASE}/campaigns/all`, {
+      credentials: 'include'
+    })
       .then(res => res.json())
       .then(data => {
-        if (data.campaigns) setCampaigns(data.campaigns);
+        if (data.campaigns) {
+          setCampaigns(data.campaigns);
+          setFilteredCampaigns(data.campaigns);
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -32,6 +39,25 @@ const CampaignPage = () => {
         setLoading(false);
       });
   }, []);
+
+  // Filter campaigns based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredCampaigns(campaigns);
+    } else {
+      const filtered = campaigns.filter(campaign =>
+        campaign.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.objective?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredCampaigns(filtered);
+    }
+  }, [searchTerm, campaigns]);
+
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   // Handle form input
   const handleChange = e => {
@@ -56,14 +82,16 @@ const CampaignPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer ...' // Add if needed
         },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Error creating campaign');
       setFormSuccess('Campaign created!');
-      setCampaigns(prev => [...prev, data.campaign]);
+      const newCampaigns = [...campaigns, data.campaign];
+      setCampaigns(newCampaigns);
+      setFilteredCampaigns(newCampaigns);
       setForm({
         title: '',
         description: '',
@@ -81,13 +109,35 @@ const CampaignPage = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Campaigns</h1>
+      
+      {/* Search Bar */}
+      <div className={styles.searchContainer}>
+        <div className={styles.searchInputWrapper}>
+          <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search campaigns by title, description, or objective..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.searchInput}
+          />
+        </div>
+        {searchTerm && (
+          <span className={styles.searchResults}>
+            {filteredCampaigns.length} campaign{filteredCampaigns.length !== 1 ? 's' : ''} found
+          </span>
+        )}
+      </div>
+
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p className={styles.error}>{error}</p>
       ) : (
         <ul className={styles.campaignList}>
-          {campaigns.map(c => (
+          {filteredCampaigns.map(c => (
             <li key={c.id} className={styles.campaignCard}>
               <div className={styles.campaignImageWrapper}>
                 <img src={c.image} alt={c.title} className={styles.campaignImage} />
@@ -104,6 +154,7 @@ const CampaignPage = () => {
           ))}
         </ul>
       )}
+      
       <h2 className={styles.subheading}>Create Campaign</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
         <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required className={styles.input} />

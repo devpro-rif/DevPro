@@ -22,17 +22,22 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    console.log('Register form submitted with:', formData);
 
     if (formData.password !== formData.confirmPassword) {
-      return setMessage("Passwords do not match.");
+      setMessage("Passwords do not match.");
+      return;
     }
+
+    setMessage('Registering...');
 
     try {
       const { username, email, password, profileImage } = formData;
       const data = await registerUser({ username, email, password, profileImage });
       setMessage(data.message);
-      console.log(data.user);
+      console.log('Registration successful:', data.user);
     } catch (error) {
+      console.error('Registration error in component:', error);
       if (error.response) {
         setMessage(error.response.data.message);
       } else {

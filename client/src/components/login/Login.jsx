@@ -9,11 +9,16 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log('Login form submitted with:', { email, password });
+    setMessage('Logging in...');
+    
     try {
       const data = await loginUser(email, password);
       setMessage(data.message);
-      console.log(data.user); // later we decide eaiter to store in local storage or what approach we will use
+      console.log('Login successful:', data.user);
+      // later we decide either to store in local storage or what approach we will use
     } catch (error) {
+      console.error('Login error in component:', error);
       if (error.response) {
         setMessage(error.response.data.message);
       } else {
