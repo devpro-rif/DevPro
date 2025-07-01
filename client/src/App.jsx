@@ -12,9 +12,9 @@ import Sidebar from './components/homePage/SideBar';
 
 const App = () => (
   <>
-  {/* // <div className="app-shell">
-  //   <Sidebar />
-  //   <div className="main-area"> */}
+ <div className="app-shell">
+   <Sidebar />
+   <div className="main-area"> */}
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -25,8 +25,8 @@ const App = () => (
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-  {/* //   </div>
-  // </div> */}
+    </div>
+   </div> 
   </>
 );
 

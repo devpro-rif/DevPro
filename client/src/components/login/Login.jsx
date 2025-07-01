@@ -12,6 +12,7 @@ export default function Login() {
   const [message, setMessage] = useState("");
 
   const handleLogin = async (e) => {
+
     e.preventDefault();
 
     setMessage("");
@@ -42,7 +43,10 @@ export default function Login() {
       const data = await loginUser(email, password);
       setMessage(data.message);
       console.log('Login successful:', data.user);
-      // later we decide either to store in local storage or what approach we will use
+
+      // Save user in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+
     } catch (error) {
       console.error('Login error in component:', error);
       if (error.response) {
@@ -52,7 +56,9 @@ export default function Login() {
       }
 
     }
-  };
+  }
+};
+
 
   return (
     <div className="login-container">

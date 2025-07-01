@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './campaignPage.module.css';
 
@@ -23,6 +23,14 @@ const CampaignPage = () => {
   const [formError, setFormError] = useState(null);
   const [formSuccess, setFormSuccess] = useState(null);
   const [showMyCampaigns, setShowMyCampaigns] = useState(false);
+  const user = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user'));
+    } catch {
+      return null;
+    }
+  }, []);
+  const createFormRef = useRef(null);
 
   // Fetch campaigns
   useEffect(() => {
@@ -43,9 +51,14 @@ const CampaignPage = () => {
       });
   }, []);
 
-  // Filter campaigns based on search term and status
+  // Filter campaigns based on search term, status, and ownership
   useEffect(() => {
     let filtered = campaigns;
+
+    // Filter by ownership if 'My Campaigns' is active
+    if (showMyCampaigns && user) {
+      filtered = filtered.filter(campaign => campaign.UserId === user.id);
+    }
 
     // Filter by status first
     if (statusFilter !== 'all') {
@@ -64,7 +77,7 @@ const CampaignPage = () => {
     }
 
     setFilteredCampaigns(filtered);
-  }, [searchTerm, statusFilter, campaigns]);
+  }, [searchTerm, statusFilter, campaigns, showMyCampaigns]);
 
   // Handle search input
   const handleSearchChange = (e) => {
@@ -132,6 +145,20 @@ const CampaignPage = () => {
       >
         {showMyCampaigns ? 'Show All Campaigns' : 'My Campaigns'}
       </button>
+      {showMyCampaigns && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+          <button
+            style={{ padding: '0.4rem 1.2rem', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+            onClick={() => {
+              if (createFormRef.current) {
+                createFormRef.current.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
+            Create Campaign
+          </button>
+        </div>
+      )}
       
       {/* Search and Filter Bar */}
       <div className={styles.searchContainer}>
@@ -171,6 +198,8 @@ const CampaignPage = () => {
         <p>Loading...</p>
       ) : error ? (
         <p className={styles.error}>{error}</p>
+      ) : filteredCampaigns.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#888', margin: '2rem 0' }}>No campaigns can be found.</p>
       ) : (
         <ul className={styles.campaignList}>
           {filteredCampaigns.map(c => (
@@ -198,19 +227,28 @@ const CampaignPage = () => {
         </ul>
       )}
       
-      <h2 className={styles.subheading}>Create Campaign</h2>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required className={styles.input} />
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required className={styles.textarea} />
-        <input name="objective" placeholder="Objective" value={form.objective} onChange={handleChange} required className={styles.input} />
-        <input name="goalAmount" type="number" placeholder="Goal Amount" value={form.goalAmount} onChange={handleChange} required className={styles.input} />
-        <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} required className={styles.input} />
-        <input name="deadline" type="date" placeholder="Deadline" value={form.deadline} onChange={handleChange} required className={styles.input} />
-        <input name="communityIds" placeholder="Community IDs (comma separated)" value={form.communityIds} onChange={handleChange} className={styles.input} />
-        <button type="submit" className={styles.button}>Create</button>
-        {formError && <p className={styles.error}>{formError}</p>}
-        {formSuccess && <p className={styles.success}>{formSuccess}</p>}
-      </form>
+      {showMyCampaigns && (
+        <>
+          <h2 className={styles.subheading} ref={createFormRef}>Create Campaign</h2>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required className={styles.input} />
+            <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required className={styles.textarea} />
+            <input name="objective" placeholder="Objective" value={form.objective} onChange={handleChange} required className={styles.input} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: Math.max(1, Number(f.goalAmount) - 1) }))}>-</button>
+              <input name="goalAmount" type="number" placeholder="Goal Amount" value={form.goalAmount} onChange={handleChange} required className={styles.input} min={1} style={{ width: 120, textAlign: 'center' }} />
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: Number(f.goalAmount) + 1 }))}>+</button>
+              <span style={{ marginLeft: 8 }}>$</span>
+            </div>
+            <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} required className={styles.input} />
+            <input name="deadline" type="date" placeholder="Deadline" value={form.deadline} onChange={handleChange} required className={styles.input} />
+            <input name="communityIds" placeholder="Community IDs (comma separated)" value={form.communityIds} onChange={handleChange} className={styles.input} />
+            <button type="submit" className={styles.button}>Create</button>
+            {formError && <p className={styles.error}>{formError}</p>}
+            {formSuccess && <p className={styles.success}>{formSuccess}</p>}
+          </form>
+        </>
+      )}
     </div>
   );
 };

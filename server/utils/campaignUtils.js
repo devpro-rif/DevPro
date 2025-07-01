@@ -55,7 +55,8 @@ const getCampaignStats = async (campaignId) => {
         });
 
         const totalContributors = contributions.length;
-        const progress = Math.round((campaign.currentAmount / campaign.goalAmount) * 100);
+        const totalAmount = contributions.reduce((sum, contribution) => sum + contribution.amount, 0);
+        const progress = Math.round((totalAmount / campaign.goalAmount) * 100);
         const daysLeft = Math.ceil((new Date(campaign.deadline) - new Date()) / (1000 * 60 * 60 * 24));
 
         return {
@@ -63,6 +64,7 @@ const getCampaignStats = async (campaignId) => {
             title: campaign.title,
             goalAmount: campaign.goalAmount,
             currentAmount: campaign.currentAmount,
+            totalAmount,
             progress,
             totalContributors,
             status: campaign.status,

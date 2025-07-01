@@ -277,3 +277,76 @@
     color: #374151;
     font-size: 0.9rem;
   }
+  
+  .updateModal {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 500px;
+    width: 100%;
+  }
+  .updateModal h3 {
+    margin-top: 0;
+    color: #0a2342;
+  }
+  .updateForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .updateInput, .updateTextarea {
+    padding: 10px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #f9fafb;
+    transition: border 0.2s;
+  }
+  .updateInput:focus, .updateTextarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #fff;
+  }
+  .updateButton {
+    background: #0a2342;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .updateButton:hover {
+    background: #133366;
+  }
+  .cancelButton {
+    background: #eee;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: background 0.2s;
+  }
+  .cancelButton:hover {
+    background: #ddd;
+  }
+  .deleteButton {
+    background: #ff5252;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .deleteButton:hover {
+    background: #d32f2f;
+  }
