@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import styles from './campaignPage.module.css';
+import { dollarsToCents, formatCurrency } from '../utils/currencyUtils';
 
 const API_BASE = 'http://localhost:4000';
 
@@ -49,18 +50,21 @@ const ContributionForm = () => {
       return;
     }
 
-          try {
-        const response = await fetch(`${API_BASE}/contributions/create`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-                  body: JSON.stringify({
+    try {
+      // Convert dollars to cents (integer) for the backend
+      const amountInCents = dollarsToCents(formData.amount);
+      
+      const response = await fetch(`${API_BASE}/contributions/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
           campaignId: parseInt(id),
-          amount: parseFloat(formData.amount)
+          amount: amountInCents
         }),
-        });
+      });
 
       const data = await response.json();
 
@@ -95,8 +99,8 @@ const ContributionForm = () => {
             <h3 className={styles.campaignTitle}>{campaign.title}</h3>
             <p className={styles.campaignDescription}>{campaign.description}</p>
             <div className={styles.campaignMeta}>
-              <span>Goal: <b>${campaign.goalAmount}</b></span>
-              <span>Current: <b>${campaign.currentAmount || 0}</b></span>
+              <span>Goal: <b>{formatCurrency(campaign.goalAmount)}</b></span>
+              <span>Current: <b>{formatCurrency(campaign.currentAmount || 0)}</b></span>
             </div>
           </div>
         </div>

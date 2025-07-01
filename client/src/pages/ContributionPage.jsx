@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './campaignPage.module.css';
 import { Link } from 'react-router-dom';
+import { formatCurrency } from '../utils/currencyUtils';
 
 const API_BASE = 'http://localhost:4000';
 
@@ -56,7 +57,7 @@ const ContributionPage = () => {
                   <strong className={styles.campaignTitle}>{c.Campaign?.title || 'Unknown Campaign'}</strong>
                   <p className={styles.campaignDescription}>{c.Campaign?.description}</p>
                   <div className={styles.campaignMeta}>
-                    <span>Amount: <b>${c.amount}</b></span>
+                    <span>Amount: <b>{formatCurrency(c.amount)}</b></span>
                     <span>Date: <b>{new Date(c.createdAt).toLocaleDateString()}</b></span>
                     <span>Status: <b>{c.Campaign?.status}</b></span>
                   </div>

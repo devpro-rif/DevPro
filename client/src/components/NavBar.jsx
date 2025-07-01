@@ -26,6 +26,9 @@ const NavBar = () => {
       <div className="navbar-company">DevPro</div>
       <div className="navbar-links">
         {isLoggedIn && (
+          <Link to="/" className="navbar-link">Home</Link>
+        )}
+        {isLoggedIn && (
           <>
             <Link to="/communities" className="navbar-link">Communities</Link>
             <Link to="/campaigns" className="navbar-link">Campaigns</Link>
@@ -46,4 +49,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default NavBar;
