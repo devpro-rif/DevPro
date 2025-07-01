@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import PaymentPage from './pages/PaymentPage';
 import CampaignPage from './pages/CampaignPage';
 import CampaignDetailPage from './pages/CampaignDetailPage';
@@ -70,11 +69,7 @@ const App = () => (
         }
       />
       
-        
-        
-       
-        
-        
+
        
         {/*catch unfound routes*/}
     <Route path="*" element={<NotFound />} />
