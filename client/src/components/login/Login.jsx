@@ -1,51 +1,29 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authService";
-import { AuthContext } from "../../context/AuthProvider";   // <- adjust path if needed
-import "./Auth.css";
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';  // import useNavigate
+import { AuthContext } from '../../contexts/AuthContext.jsx';
+import { loginUser } from '../services/authService'; 
+import './Auth.css';
 
-export default function Login() {
-  const navigate = useNavigate();
-  const { setAuth } = useContext(AuthContext);           // will be a no‑op if provider missing
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();  // create navigate instance
 
   const handleLogin = async (e) => {
-
     e.preventDefault();
-
-    setMessage("");
-    try {
-      /* authService should return { token, user, message } */
-      const { token, user, message } = await loginUser(email, password);
-
-      /* 1. persist token + user */
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      /* 2. update context so the rest of the app re‑renders instantly */
-      setAuth?.({ token, user });
-
-      /* 3. go to the homepage (or wherever) */
-      navigate("/");
-
-      /* 4. optional toast */
-      setMessage(message ?? "Logged in!");
-    } catch (error) {
-      const errMsg =
-        error?.response?.data?.message ?? error.message ?? "Something went wrong.";
-      setM
-    console.log('Login form submitted with:', { email, password });
     setMessage('Logging in...');
-    
+
     try {
       const data = await loginUser(email, password);
       setMessage(data.message);
-      console.log('Login successful:', data.user);
 
-      // Save user in localStorage
-      localStorage.setItem("user", JSON.stringify(data.user));
+      login(data.user);
+
+      // Navigate to /communities on successful login
+      navigate('/communities');
 
     } catch (error) {
       console.error('Login error in component:', error);
@@ -54,17 +32,13 @@ export default function Login() {
       } else {
         setMessage("Something went wrong.");
       }
-
     }
-  }
-};
-
+  };
 
   return (
     <div className="login-container">
       <div className="login-card">
         <h2 className="login-title">Login</h2>
-
         <form onSubmit={handleLogin}>
           <div className="input-group">
             <label>Email</label>
@@ -76,7 +50,6 @@ export default function Login() {
               required
             />
           </div>
-
           <div className="input-group">
             <label>Password</label>
             <input
@@ -87,15 +60,21 @@ export default function Login() {
               required
             />
           </div>
-
-          <button type="submit" className="login-button">
-            Login
-          </button>
-
+          <button type="submit" className="login-button">Login</button>
           {message && <p className="login-message">{message}</p>}
         </form>
+
+        <div style={{ textAlign: 'center', marginTop: '15px' }}>
+          <p>Don't have an account?</p>
+          <Link to="/register">
+            <button className="login-button" style={{ backgroundColor: '#28a745' }}>
+              Register
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
-}
+
+export default Login;
