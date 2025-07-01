@@ -13,6 +13,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     setMessage("");
     try {
       /* authService should return { token, user, message } */
@@ -34,6 +35,23 @@ export default function Login() {
       const errMsg =
         error?.response?.data?.message ?? error.message ?? "Something went wrong.";
       setMessage(errMsg);
+=======
+    console.log('Login form submitted with:', { email, password });
+    setMessage('Logging in...');
+    
+    try {
+      const data = await loginUser(email, password);
+      setMessage(data.message);
+      console.log('Login successful:', data.user);
+      // later we decide either to store in local storage or what approach we will use
+    } catch (error) {
+      console.error('Login error in component:', error);
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Something went wrong.");
+      }
+>>>>>>> f22807f8e67eb11197b89bbdc943b8a03802af6a
     }
   };
 

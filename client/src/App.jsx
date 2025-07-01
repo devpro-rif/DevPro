@@ -1,16 +1,20 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PaymentPage from "./pages/PaymentPage";
-import Login from "./components/login/Login";
-import Register from "./components/login/Register";
-import HomePage from "./pages/HomePage";
-import CommunityDetailPage from "./pages/CommunityDetailPage";
-import "./components/homePage/styles.css";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import PaymentPage from './pages/PaymentPage';
+import CampaignPage from './pages/CampaignPage';
+import CampaignDetailPage from './pages/CampaignDetailPage';
+import ContributionForm from './pages/ContributionForm';
+import Login from './components/login/Login';
+import Register from './components/login/Register';
+import NavBar from './components/NavBar';
+
 const App = () => (
   <Router>
+    <NavBar />
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/community/:id" element={<CommunityDetailPage />} />
+      <Route path="/campaigns" element={<CampaignPage />} />
+      <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
+      <Route path="/campaigns/:id/contribute" element={<ContributionForm />} />
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
