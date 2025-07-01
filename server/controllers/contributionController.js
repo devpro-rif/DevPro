@@ -2,6 +2,7 @@ const db = require('../database/index');
 const User = db.User;
 const Campaign = db.Campaign;
 const Contribution = db.Contribution;
+const { getCampaignStats } = require('../utils/campaignUtils');
 
 // Create contribution
 const createContribution = async (req, res) => {
@@ -113,37 +114,17 @@ const getContributionsByUser = async (req, res) => {
     }
 }; 
 
-// Get total contributions for a campaign
+// Replace getCampaignTotal with unified stats endpoint
 const getCampaignTotal = async (req, res) => {
     const campaignId = req.params.campaignId;
-
     try {
-        const campaign = await Campaign.findByPk(campaignId);
-        if (!campaign) {
-            return res.status(404).json({ message: "Campaign not found." });
-        }
-
-        const contributions = await Contribution.findAll({
-            where: { CampaignId: campaignId }
-        });
-
-        const totalAmount = contributions.reduce((sum, contribution) => {
-            return sum + contribution.amount;
-        }, 0);
-
-        const totalContributors = contributions.length;
-
+        const stats = await getCampaignStats(campaignId);
         return res.status(200).json({
-            message: "Campaign total:",
-            campaignId: campaignId,
-            totalAmount: totalAmount,
-            totalContributors: totalContributors,
-            goalAmount: campaign.goalAmount,
-            progress: Math.round((totalAmount / campaign.goalAmount) * 100),
-            status: campaign.status
+            message: "Campaign statistics:",
+            ...stats
         });
     } catch (error) {
-        console.error("Error getting campaign total:", error);
+        console.error("Error getting campaign statistics:", error);
         res.status(500).json({ message: "Server error." });
     }
 };
