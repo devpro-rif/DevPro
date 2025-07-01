@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './campaignPage.module.css';
 
 const API_BASE = 'http://localhost:4000/campaigns'; // Updated to match correct API base
@@ -9,6 +10,7 @@ const CampaignPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('active');
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -20,6 +22,7 @@ const CampaignPage = () => {
   });
   const [formError, setFormError] = useState(null);
   const [formSuccess, setFormSuccess] = useState(null);
+  const [showMyCampaigns, setShowMyCampaigns] = useState(false);
 
   // Fetch campaigns
   useEffect(() => {
@@ -40,23 +43,37 @@ const CampaignPage = () => {
       });
   }, []);
 
-  // Filter campaigns based on search term
+  // Filter campaigns based on search term and status
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredCampaigns(campaigns);
-    } else {
-      const filtered = campaigns.filter(campaign =>
+    let filtered = campaigns;
+
+    // Filter by status first
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(campaign => 
+        campaign.status?.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    // Then filter by search term
+    if (searchTerm.trim() !== '') {
+      filtered = filtered.filter(campaign =>
         campaign.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         campaign.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         campaign.objective?.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredCampaigns(filtered);
     }
-  }, [searchTerm, campaigns]);
+
+    setFilteredCampaigns(filtered);
+  }, [searchTerm, statusFilter, campaigns]);
 
   // Handle search input
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  // Handle status filter
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
   };
 
   // Handle form input
@@ -109,8 +126,14 @@ const CampaignPage = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Campaigns</h1>
+      <button
+        style={{ marginBottom: '1rem', padding: '0.4rem 1.2rem', background: '#0a2342', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+        onClick={() => setShowMyCampaigns(v => !v)}
+      >
+        {showMyCampaigns ? 'Show All Campaigns' : 'My Campaigns'}
+      </button>
       
-      {/* Search Bar */}
+      {/* Search and Filter Bar */}
       <div className={styles.searchContainer}>
         <div className={styles.searchInputWrapper}>
           <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +147,20 @@ const CampaignPage = () => {
             className={styles.searchInput}
           />
         </div>
-        {searchTerm && (
+        <div className={styles.filterContainer}>
+          <select 
+            value={statusFilter} 
+            onChange={handleStatusFilterChange}
+            className={styles.statusFilter}
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="expired">Expired</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        {(searchTerm || statusFilter !== 'active') && (
           <span className={styles.searchResults}>
             {filteredCampaigns.length} campaign{filteredCampaigns.length !== 1 ? 's' : ''} found
           </span>
@@ -139,17 +175,24 @@ const CampaignPage = () => {
         <ul className={styles.campaignList}>
           {filteredCampaigns.map(c => (
             <li key={c.id} className={styles.campaignCard}>
-              <div className={styles.campaignImageWrapper}>
-                <img src={c.image} alt={c.title} className={styles.campaignImage} />
-              </div>
-              <div className={styles.campaignInfo}>
-                <strong className={styles.campaignTitle}>{c.title}</strong>
-                <p className={styles.campaignDescription}>{c.description}</p>
-                <div className={styles.campaignMeta}>
-                  <span>Goal: <b>{c.goalAmount}</b></span>
-                  <span>Deadline: <b>{new Date(c.deadline).toLocaleDateString()}</b></span>
+              <Link to={`/campaigns/${c.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+                <div className={styles.campaignImageWrapper}>
+                  <img src={c.image} alt={c.title} className={styles.campaignImage} />
                 </div>
-              </div>
+                <div className={styles.campaignInfo}>
+                  <strong className={styles.campaignTitle}>{c.title}</strong>
+                  <p className={styles.campaignDescription}>{c.description}</p>
+                  <div className={styles.campaignMeta}>
+                    <span>Goal: <b>{c.goalAmount}</b></span>
+                    <span>Deadline: <b>{new Date(c.deadline).toLocaleDateString()}</b></span>
+                  </div>
+                  <div className={styles.campaignStatus}>
+                    <span className={`${styles.statusBadge} ${styles[`status-${c.status?.toLowerCase()}`]}`}>
+                      {c.status}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
