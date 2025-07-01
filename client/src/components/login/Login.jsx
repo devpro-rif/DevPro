@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';  // import useNavigate
+import { AuthContext } from '../../contexts/AuthContext.jsx';
 import { loginUser } from '../services/authService'; 
 import './Auth.css';
 
@@ -7,31 +9,31 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();  // create navigate instance
+
   const handleLogin = async (e) => {
-  e.preventDefault();
-  console.log('Login form submitted with:', { email, password });
-  setMessage('Logging in...');
+    e.preventDefault();
+    setMessage('Logging in...');
 
-  try {
-    const data = await loginUser(email, password);
-    setMessage(data.message);
-    console.log('Login successful:', data.user);
+    try {
+      const data = await loginUser(email, password);
+      setMessage(data.message);
 
-    // Save user in localStorage
-    localStorage.setItem("user", JSON.stringify(data.user));
+      login(data.user);
 
-   
+      // Navigate to /communities on successful login
+      navigate('/communities');
 
-  } catch (error) {
-    console.error('Login error in component:', error);
-    if (error.response) {
-      setMessage(error.response.data.message);
-    } else {
-      setMessage("Something went wrong.");
+    } catch (error) {
+      console.error('Login error in component:', error);
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Something went wrong.");
+      }
     }
-  }
-};
-
+  };
 
   return (
     <div className="login-container">
@@ -61,6 +63,15 @@ function Login() {
           <button type="submit" className="login-button">Login</button>
           {message && <p className="login-message">{message}</p>}
         </form>
+
+        <div style={{ textAlign: 'center', marginTop: '15px' }}>
+          <p>Don't have an account?</p>
+          <Link to="/register">
+            <button className="login-button" style={{ backgroundColor: '#28a745' }}>
+              Register
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

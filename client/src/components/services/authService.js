@@ -39,3 +39,18 @@ export const registerUser = async ({ username, email, password, profileImage }) 
     throw error;
   }
 };
+
+//logout service
+
+export const logoutUser = async () => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/users/logout`,
+      {},
+      { withCredentials: true }
+    );
+    return { success: true, message: response.data.message };
+  } catch (error) {
+    return { success: false, message: error.response?.data?.message || "Logout failed." };
+  }
+};

@@ -1,0 +1,50 @@
+/* NavBar.css */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: #0a2342;
+  color: #fff;
+  min-height: 44px;
+}
+
+.navbar-company {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.navbar-logout {
+  color: #ff5252;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.navbar-logout:hover {
+  background: rgba(255, 82, 82, 0.1);
+}

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Link , useNavigate} from 'react-router-dom';
 import { registerUser } from '../services/authService'; 
 import './Auth.css';
 
 function Register() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -36,6 +38,7 @@ function Register() {
       const data = await registerUser({ username, email, password, profileImage });
       setMessage(data.message);
       console.log('Registration successful:', data.user);
+      navigate("/login");
     } catch (error) {
       console.error('Registration error in component:', error);
       if (error.response) {
@@ -109,6 +112,16 @@ function Register() {
           <button type="submit" className="login-button">Register</button>
           {message && <p className="login-message">{message}</p>}
         </form>
+
+        {/* Add login navigation button here */}
+        <div style={{ textAlign: 'center', marginTop: '15px' }}>
+          <p>Already have an account?</p>
+          <Link to="/login">
+            <button className="login-button" style={{ backgroundColor: '#6c757d' }}>
+              Go to Login
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

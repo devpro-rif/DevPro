@@ -1,57 +1,49 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext.jsx';  // fixed import path
+import { logoutUser } from './services/authService';
+import './NavBar.css';
 
-const navStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0.5rem 1rem',
-  background: '#0a2342', // dark blue
-  color: '#fff',
-  minHeight: '44px',
+const NavBar = () => {
+  const navigate = useNavigate();
+  const { user, logout } = useContext(AuthContext);
+  const isLoggedIn = !!user; // true if user object exists
+
+  const handleLogout = async () => {
+    const result = await logoutUser();
+
+    if (result.success) {
+      logout(); 
+      alert("Logout successful");
+      navigate("/login");
+    } else {
+      alert("Logout failed: " + result.message);
+    }
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-company">DevPro</div>
+      <div className="navbar-links">
+        {isLoggedIn && (
+          <>
+            <Link to="/communities" className="navbar-link">Communities</Link>
+            <Link to="/campaigns" className="navbar-link">Campaigns</Link>
+            <Link to="/contributions" className="navbar-link">Contributions</Link>
+          </>
+        )}
+        
+      </div>
+
+      {isLoggedIn && (
+        <>
+          <Link to="/user/edit" className="navbar-link">Edit profile</Link>
+          <span onClick={handleLogout} className="navbar-logout">LogOut</span>
+        </>
+        
+      )}
+    </nav>
+  );
 };
 
-const companyStyle = {
-  fontWeight: 'bold',
-  fontSize: '1.1rem',
-  color: '#fff',
-  letterSpacing: '1px',
-};
-
-const centerLinksStyle = {
-  display: 'flex',
-  gap: '1.2rem',
-  flex: 1,
-  justifyContent: 'center',
-};
-
-const linkStyle = {
-  textDecoration: 'none',
-  color: '#fff',
-  fontSize: '0.98rem',
-  fontWeight: 500,
-  padding: '0.3rem 0.6rem',
-  borderRadius: '4px',
-  transition: 'background 0.2s',
-};
-
-const logoutStyle = {
-  ...linkStyle,
-  color: '#ff5252',
-  fontWeight: 'bold',
-  background: 'rgba(255,255,255,0.05)',
-};
-
-const NavBar = () => (
-  <nav style={navStyle}>
-    <div style={companyStyle}>DevPro</div>
-    <div style={centerLinksStyle}>
-      <Link to="/communities" style={linkStyle}>Communities</Link>
-      <Link to="/campaigns" style={linkStyle}>Campaigns</Link>
-      <Link to="/contributions" style={linkStyle}>Contributions</Link>
-    </div>
-    <Link to="/logout" style={logoutStyle}>LogOut</Link>
-  </nav>
-);
-
-export default NavBar; 
+export default NavBar;
