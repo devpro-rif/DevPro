@@ -1,36 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { api } from "../../api";
-
-/* Optional: if you have an AuthContext already */
-import { useAuth } from "../../context/AuthProvider";
+import { AuthContext } from "../../context/AuthProvider"; // Adjust path
+import { api } from "../../api"; // This is your axios instance with baseURL
 
 export default function Sidebar() {
-    const { token } = useAuth();
-//   const { token } = useAuth?.() ?? { token: localStorage.getItem("token") };
-  const [communities, setCommunities] = useState([]);
   const location = useLocation();
+  const { token } = useContext(AuthContext) || {};
+  const [communities, setCommunities] = useState([]);
 
-  /* Fetch communities the user has joined */
+  const authToken = token || localStorage.getItem("token");
+
   useEffect(() => {
-    if (!token) return;
-    api
-      .get("/communities/user/communities") // router.get("/user/communities")
-      .then(({ data }) => setCommunities(data))
-      .catch(console.error);
-  }, [token]);
+    if (!authToken) return;
 
-  /* Hide sidebar until the user is authenticated */
-  if (!token) return null;
+    api
+      .get("/communities/user/communities", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((res) => setCommunities(res.data))
+      .catch((err) => console.error("Sidebar fetch error:", err));
+  }, [authToken]);
+
+  if (!authToken) return null;
 
   return (
     <nav className="sidebar">
-      {/* Home button at the top */}
+      {/* Home Button */}
       <Link to="/" className="sidebar-logo" title="Home">
         🌐
       </Link>
 
-      {/* User’s communities */}
+      {/* Joined Communities */}
       <div className="sidebar-list">
         {communities.map((c) => {
           const active = location.pathname.includes(`/community/${c.id}`);

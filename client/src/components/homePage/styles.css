@@ -64,7 +64,7 @@ button {
 .primary:hover   { background: #1e4ed8; }
 .secondary:hover { background: #e5e7eb; }
 
-/* Modal */
+
 .modal {
   border: 0;
   padding: 0;
@@ -84,7 +84,7 @@ button {
   gap: 0.75rem;
 }
 
-/* Generic */
+
 label {
   display: flex;
   flex-direction: column;
@@ -125,7 +125,7 @@ textarea {
   font-size: 0.8rem;
   opacity: 0.7;
 }
-/* ---------- Layout shell ---------- */
+
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -133,16 +133,15 @@ textarea {
 .main-area {
   flex: 1;
   overflow-x: hidden;
-  /* keep existing spacing helpers (wrapper, etc.) working */
+  
 }
 
-/* ---------- Discord‑like sidebar ---------- */
 .sidebar {
   position: sticky;
   top: 0;
   left: 0;
   width: 72px;
-  background: #202225;          /* dark gray like Discord */
+  background: #202225;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -150,17 +149,19 @@ textarea {
   gap: 0.75rem;
   z-index: 100;
 }
+
 .sidebar-logo {
   height: 48px;
   width: 48px;
   border-radius: 24px;
-  background: #5865f2;          /* Discord blurple */
+  background: #5865f2;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   color: #fff;
 }
+
 .sidebar-list {
   flex: 1;
   overflow-y: auto;
@@ -168,6 +169,7 @@ textarea {
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .sidebar-item {
   width: 48px;
   height: 48px;
@@ -175,14 +177,17 @@ textarea {
   overflow: hidden;
   transition: border-radius 0.2s, background 0.15s;
 }
+
 .sidebar-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .sidebar-item:hover {
   border-radius: 16px;
 }
+
 .sidebar-item.active {
   border-radius: 16px;
   background: #5865f2;

@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-<<<<<<< HEAD
+
     setMessage("");
     try {
       /* authService should return { token, user, message } */
@@ -34,8 +34,7 @@ export default function Login() {
     } catch (error) {
       const errMsg =
         error?.response?.data?.message ?? error.message ?? "Something went wrong.";
-      setMessage(errMsg);
-=======
+      setM
     console.log('Login form submitted with:', { email, password });
     setMessage('Logging in...');
     
@@ -51,7 +50,7 @@ export default function Login() {
       } else {
         setMessage("Something went wrong.");
       }
->>>>>>> f22807f8e67eb11197b89bbdc943b8a03802af6a
+
     }
   };
 
@@ -92,4 +91,5 @@ export default function Login() {
       </div>
     </div>
   );
+}
 }
