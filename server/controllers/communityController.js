@@ -1,5 +1,5 @@
 const { Community } = require('../database/index');
-const db = require("../database/index");
+
 // Create a new community
 exports.createCommunity = async (req, res) => {
   try {
@@ -56,6 +56,56 @@ exports.deleteCommunity = async (req, res) => {
     await community.destroy();
     res.status(204).send();
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get community members
+exports.getCommunityMembers = async (req, res) => {
+  try {
+    const { communityId } = req.params;
+    
+    const community = await Community.findByPk(communityId);
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    const members = await CommunityMemberModel.findAll({
+      where: { CommunityId: communityId },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'username', 'email', 'profileImage']
+        }
+      ]
+    });
+
+    res.status(200).json(members);
+  } catch (error) {
+    console.error('Error fetching community members:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Check if user is member of community
+exports.checkMembership = async (req, res) => {
+  try {
+    const { communityId } = req.params;
+    const userId = req.user.id; // Assuming you have user authentication middleware
+
+    const membership = await CommunityMemberModel.findOne({
+      where: {
+        UserId: userId,
+        CommunityId: communityId
+      }
+    });
+
+    res.status(200).json({
+      isMember: !!membership,
+      role: membership ? membership.role : null
+    });
+  } catch (error) {
+    console.error('Error checking membership:', error);
     res.status(500).json({ error: error.message });
   }
 }; 
