@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './campaignPage.module.css';
+import { dollarsToCents, formatCurrency } from '../utils/currencyUtils';
 
 const API_BASE = 'http://localhost:4000/campaigns'; // Updated to match correct API base
 
@@ -102,7 +103,7 @@ const CampaignPage = () => {
     // Prepare data
     const payload = {
       ...form,
-      goalAmount: Number(form.goalAmount),
+      goalAmount: dollarsToCents(form.goalAmount),
       communityIds: form.communityIds
         ? form.communityIds.split(',').map(id => id.trim())
         : [],
@@ -212,7 +213,7 @@ const CampaignPage = () => {
                   <strong className={styles.campaignTitle}>{c.title}</strong>
                   <p className={styles.campaignDescription}>{c.description}</p>
                   <div className={styles.campaignMeta}>
-                    <span>Goal: <b>{c.goalAmount}</b></span>
+                    <span>Goal: <b>{formatCurrency(c.goalAmount)}</b></span>
                     <span>Deadline: <b>{new Date(c.deadline).toLocaleDateString()}</b></span>
                   </div>
                   <div className={styles.campaignStatus}>
@@ -235,9 +236,9 @@ const CampaignPage = () => {
             <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required className={styles.textarea} />
             <input name="objective" placeholder="Objective" value={form.objective} onChange={handleChange} required className={styles.input} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: Math.max(1, Number(f.goalAmount) - 1) }))}>-</button>
-              <input name="goalAmount" type="number" placeholder="Goal Amount" value={form.goalAmount} onChange={handleChange} required className={styles.input} min={1} style={{ width: 120, textAlign: 'center' }} />
-              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: Number(f.goalAmount) + 1 }))}>+</button>
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: Math.max(1, Number(f.goalAmount) - 1).toString() }))}>-</button>
+              <input name="goalAmount" type="number" placeholder="Goal Amount" value={form.goalAmount} onChange={handleChange} required className={styles.input} min={1} step={0.01} style={{ width: 120, textAlign: 'center' }} />
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setForm(f => ({ ...f, goalAmount: (Number(f.goalAmount) + 1).toString() }))}>+</button>
               <span style={{ marginLeft: 8 }}>$</span>
             </div>
             <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} required className={styles.input} />

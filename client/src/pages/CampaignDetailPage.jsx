@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import styles from './campaignPage.module.css';
+import { formatCurrency } from '../utils/currencyUtils';
 
 const API_BASE = 'http://localhost:4000/campaigns';
 
@@ -128,7 +129,7 @@ const CampaignDetailPage = () => {
           <p className={styles.campaignDescription}>{campaign.description}</p>
           <div className={styles.campaignMeta}>
             <span>Objective: <b>{campaign.objective}</b></span>
-            <span>Goal: <b>{campaign.goalAmount}</b></span>
+            <span>Goal: <b>{formatCurrency(campaign.goalAmount)}</b></span>
             <span>Deadline: <b>{new Date(campaign.deadline).toLocaleDateString()}</b></span>
           </div>
           <div style={{ marginTop: 16 }}>
@@ -166,9 +167,9 @@ const CampaignDetailPage = () => {
                 {stats ? (
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     <li><b>Title:</b> {stats.title}</li>
-                    <li><b>Goal Amount:</b> {stats.goalAmount}</li>
-                    <li><b>Current Amount:</b> {stats.currentAmount}</li>
-                    <li><b>Total Raised:</b> {stats.totalAmount}</li>
+                    <li><b>Goal Amount:</b> {formatCurrency(stats.goalAmount)}</li>
+                    <li><b>Current Amount:</b> {formatCurrency(stats.currentAmount)}</li>
+                    <li><b>Total Raised:</b> {formatCurrency(stats.totalAmount)}</li>
                     <li><b>Contributors:</b> {stats.totalContributors}</li>
                     <li><b>Progress:</b> {stats.progress}%</li>
                     <li><b>Days Left:</b> {stats.daysLeft}</li>

@@ -4,6 +4,7 @@ import PaymentPage from './pages/PaymentPage';
 import CampaignPage from './pages/CampaignPage';
 import CampaignDetailPage from './pages/CampaignDetailPage';
 import ContributionForm from './pages/ContributionForm';
+import ContributionPage from './pages/ContributionPage';
 import Login from './components/login/Login';
 import Register from './components/login/Register';
 import EditUser from './components/userProfile/EditUser';
@@ -67,6 +68,14 @@ const App = () => (
         element={
           <PrivateRoute>
             <EditUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/contributions"
+        element={
+          <PrivateRoute>
+            <ContributionPage />
           </PrivateRoute>
         }
       />

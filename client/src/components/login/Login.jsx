@@ -23,7 +23,7 @@ function Login() {
       login(data.user);
 
       // Navigate to /communities on successful login
-      navigate('/communities');
+      navigate('/');
 
     } catch (error) {
       console.error('Login error in component:', error);
@@ -77,4 +77,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Login;

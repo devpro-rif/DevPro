@@ -1,3 +1,7 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { formatCurrency } from "../../utils/currencyUtils";
+
 export default function CampaignCard({
   title,
   description,
@@ -19,8 +23,8 @@ export default function CampaignCard({
       <p><em>{objective}</em></p>
 
       <p>
-        Raised&nbsp;<strong>${currentAmount}</strong> /{" "}
-        <strong>${goalAmount}</strong>
+        Raised&nbsp;<strong>{formatCurrency(currentAmount)}</strong> /{" "}
+        <strong>{formatCurrency(goalAmount)}</strong>
       </p>
 
       <p className="small">

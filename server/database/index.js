@@ -73,6 +73,7 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
+
 /*sequelize
   .sync({ alter: true })
   .then(() => {

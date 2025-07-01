@@ -173,31 +173,19 @@ const getUserContributions = async (req, res) => {
       where: { UserId: userId },
       include: {
         model: db.Campaign,
-        attributes: ['name'],
+        attributes: ['id', 'title', 'description', 'status'],
       },
-      attributes: ['id', 'amount', 'createdAt'],
       order: [['createdAt', 'DESC']],
     });
 
     if (!contributions || contributions.length === 0) {
       return res.status(200).json({
-        totalAmount: 0,
         contributions: [],
       });
     }
 
-    const totalAmount = contributions.reduce((sum, c) => sum + c.amount, 0);
-
-    const formattedContributions = contributions.map((c) => ({
-      id: c.id,
-      amount: c.amount,
-      campaignName: c.Campaign.name,
-      date: c.createdAt,
-    }));
-
     res.status(200).json({
-      totalAmount,
-      contributions: formattedContributions,
+      contributions: contributions,
     });
   } catch (error) {
     console.error("Error fetching contributions:", error);
