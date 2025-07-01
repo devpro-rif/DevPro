@@ -34,6 +34,10 @@ const userRoutes = require("./routes/userRoutes")
 app.use("/api/users", userRoutes)
 app.use("/api/paiment", require("./routes/paimentRoutes"))
 app.use("/api/communities", require("./routes/communityRoutes"))
+
+// Community invitation routes
+app.use("/api/community-invitations", require("./routes/communityInvitationRoutes"))
+
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
 });
