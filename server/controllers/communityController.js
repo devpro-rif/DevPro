@@ -1,4 +1,4 @@
-const { Community, User, CommunityMemberModel } = require('../database/index');
+const { Community } = require('../database/index');
 
 // Create a new community
 exports.createCommunity = async (req, res) => {
@@ -109,3 +109,52 @@ exports.checkMembership = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }; 
+ 
+
+// get all user's communty 
+exports.getUserCommunities = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const userCommunities = await db.Community.findAll({
+      include: [{
+        model: db.User,
+        as: "Users", 
+        through: {
+          model: db.CommunityMemberModel,
+          where: { UserId: userId },
+        },
+        attributes: ['id'], 
+        required: true,
+      }],
+      
+    });
+    
+
+    if (!userCommunities.length) {
+      return res.status(200).json({
+        message: "User is not a member or holder of any community.",
+        communities: [],
+      });
+    }
+
+    const communitiesWithRole = userCommunities.map((community) => {
+      const userLink = community.Users?.[0]; 
+      const role = userLink?.CommunityMemberModel?.role ;
+
+      return {
+        id: community.id,
+        name: community.name,
+        description: community.description,
+        image: community.image,
+        category: community.category,
+        role,
+      };
+    });
+
+    res.status(200).json({ communities: communitiesWithRole });
+  } catch (error) {
+    console.error("Error fetching user communities:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};

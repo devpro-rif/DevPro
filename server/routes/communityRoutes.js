@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require("../middleware/authMiddleware")
 const communityController = require('../controllers/communityController');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -23,5 +24,9 @@ router.get('/:communityId/members', communityController.getCommunityMembers);
 
 // Check if user is member of community
 router.get('/:communityId/membership', authMiddleware, communityController.checkMembership);
+
+// get user communities 
+
+router.get("/user/communities", auth , communityController.getUserCommunities)
 
 module.exports = router; 
