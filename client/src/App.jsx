@@ -7,6 +7,7 @@ import ContributionForm from './pages/ContributionForm';
 import Login from './components/login/Login';
 import Register from './components/login/Register';
 import NavBar from './components/NavBar';
+import ContributionPage from './pages/ContributionPage';
 
 const App = () => (
   <Router>
@@ -18,6 +19,7 @@ const App = () => (
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/contributions" element={<ContributionPage />} />
     </Routes>
   </Router>
 );

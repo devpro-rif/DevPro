@@ -16,7 +16,10 @@ function Login() {
       const data = await loginUser(email, password);
       setMessage(data.message);
       console.log('Login successful:', data.user);
-      // later we decide either to store in local storage or what approach we will use
+
+      // Save user in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+
     } catch (error) {
       console.error('Login error in component:', error);
       if (error.response) {
