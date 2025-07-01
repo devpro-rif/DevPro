@@ -104,18 +104,24 @@ const ContributionForm = () => {
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
             <label htmlFor="amount">Contribution Amount ($)</label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              placeholder="Enter amount"
-              min="0.01"
-              step="0.01"
-              required
-              className={styles.input}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setFormData(f => ({ ...f, amount: Math.max(0.01, parseFloat(f.amount || 0) - 1).toFixed(2) }))}>-</button>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="Enter amount"
+                min="0.01"
+                step="0.01"
+                required
+                className={styles.input}
+                style={{ width: 120, textAlign: 'center' }}
+              />
+              <button type="button" style={{ padding: '0.3rem 0.8rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: 4, border: '1px solid #ccc', background: '#f3f4f6', cursor: 'pointer' }} onClick={() => setFormData(f => ({ ...f, amount: (parseFloat(f.amount || 0) + 1).toFixed(2) }))}>+</button>
+              <span style={{ marginLeft: 8 }}>$</span>
+            </div>
           </div>
           
 
