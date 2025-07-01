@@ -46,9 +46,10 @@ const NavBar = () => (
   <nav style={navStyle}>
     <div style={companyStyle}>DevPro</div>
     <div style={centerLinksStyle}>
-      <Link to="/communities" style={linkStyle}>Communities</Link>
+      <Link to="/" style={linkStyle}>Communities</Link>
       <Link to="/campaigns" style={linkStyle}>Campaigns</Link>
       <Link to="/contributions" style={linkStyle}>Contributions</Link>
+      <Link to="/login" style={linkStyle}>login</Link>
     </div>
     <Link to="/logout" style={logoutStyle}>LogOut</Link>
   </nav>
