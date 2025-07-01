@@ -318,23 +318,6 @@ const getCampaignsByStatus = async (req, res) => {
     }
 };
 
-// Get campaign statistics
-const getCampaignStats = async (req, res) => {
-    const campaign_id = req.params.id_campaign;
-
-    try {
-        const stats = await getCampaignStatsUtil(campaign_id);
-        
-        res.status(200).json({
-            message: "Campaign statistics:",
-            ...stats
-        });
-    } catch (error) {
-        console.error("Error getting campaign statistics:", error);
-        res.status(500).json({ message: "Server error." });
-    }
-};
-
 // Refresh all campaign statuses
 const refreshAllCampaignStatusesController = async (req, res) => {
     try {
@@ -359,6 +342,5 @@ module.exports = {
     getCampaignsByCommunity,
     deleteCampaign,
     getCampaignsByStatus,
-    getCampaignStats,
     refreshAllCampaignStatuses: refreshAllCampaignStatusesController
 }; 

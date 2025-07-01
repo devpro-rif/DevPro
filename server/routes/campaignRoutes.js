@@ -8,7 +8,6 @@ const {
     getCampaignsByCommunity,
     deleteCampaign,
     getCampaignsByStatus,
-    getCampaignStats,
     refreshAllCampaignStatuses
 } = require("../controllers/campaignController");
 const auth = require("../middleware/authMiddleware");
@@ -30,9 +29,6 @@ routerCampaign.get("/campaigns/community/:id_community", getCampaignsByCommunity
 
 // Get campaigns by status
 routerCampaign.get("/campaigns/status/:status", getCampaignsByStatus);
-
-// Get campaign statistics
-routerCampaign.get("/campaign/:id_campaign/stats", getCampaignStats);
 
 // Create campaign (requires authentication)
 routerCampaign.post("/campaign/create", auth, createCampaign);

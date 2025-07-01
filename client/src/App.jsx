@@ -8,6 +8,7 @@ import Login from './components/login/Login';
 import Register from './components/login/Register';
 import EditUser from './components/userProfile/EditUser';
 import NavBar from './components/NavBar';
+import ContributionPage from './pages/ContributionPage';
 
 const App = () => (
   <Router>
@@ -19,7 +20,11 @@ const App = () => (
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+
+      <Route path="/contributions" element={<ContributionPage />} />
+
       <Route path="/user/edit" element={<EditUser />} />
+
     </Routes>
   </Router>
 );

@@ -8,26 +8,27 @@ function Login() {
   const [message, setMessage] = useState('');
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  console.log('Login form submitted with:', { email, password });
-  setMessage('Logging in...');
 
-  try {
-    const data = await loginUser(email, password);
-    setMessage(data.message);
-    console.log('Login successful:', data.user);
+    e.preventDefault();
+    console.log('Login form submitted with:', { email, password });
+    setMessage('Logging in...');
+    
+    try {
+      const data = await loginUser(email, password);
+      setMessage(data.message);
+      console.log('Login successful:', data.user);
 
-    // Save user in localStorage
-    localStorage.setItem("user", JSON.stringify(data.user));
+      // Save user in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-   
+    } catch (error) {
+      console.error('Login error in component:', error);
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Something went wrong.");
+      }
 
-  } catch (error) {
-    console.error('Login error in component:', error);
-    if (error.response) {
-      setMessage(error.response.data.message);
-    } else {
-      setMessage("Something went wrong.");
     }
   }
 };
