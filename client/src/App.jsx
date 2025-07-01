@@ -10,6 +10,8 @@ import EditUser from './components/userProfile/EditUser';
 import NavBar from './components/NavBar';
 import PrivateRoute from './components/PrivateRoute'; 
 import NotFound from './components/NotFound';
+import HomePage from './pages/HomePage';
+
 
 const App = () => (
   <Router>
