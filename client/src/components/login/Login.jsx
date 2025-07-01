@@ -8,6 +8,7 @@ function Login() {
   const [message, setMessage] = useState('');
 
   const handleLogin = async (e) => {
+
     e.preventDefault();
     console.log('Login form submitted with:', { email, password });
     setMessage('Logging in...');
@@ -27,8 +28,11 @@ function Login() {
       } else {
         setMessage("Something went wrong.");
       }
+
     }
-  };
+  }
+};
+
 
   return (
     <div className="login-container">

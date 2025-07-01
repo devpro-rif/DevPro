@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { register,login,logout,updateUsername ,updatePassword , getUserContributions } = require("../controllers/userController");
+const { register,login,logout,updateUsername ,updatePassword , getUserContributions , updateProfileImg} = require("../controllers/userController");
 const auth = require("../middleware/authMiddleware")
 //register route
 router.post("/register", register);
@@ -20,4 +20,8 @@ router.put("/update-password", auth, updatePassword);
 // user contribution
 
 router.get("/contributions", auth , getUserContributions)
+
+// update profile immage url
+
+router.put ('/update-profileImmage', auth , updateProfileImg)
 module.exports = router;
