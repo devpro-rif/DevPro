@@ -38,7 +38,7 @@ npm install
 
 # 3. Install frontend dependencies
 cd ../client
-npm install
+npm install ```
 
 # ✅ Done installing dependencies.
 # ❗ Now close this terminal and reopen a new one to start the app properly.
