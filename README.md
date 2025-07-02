@@ -60,4 +60,17 @@ npm install
 - VITE_API_URL=http://localhost:4000/api
 - VITE_STRIPE_PUBLISHABLE_KEY = pk_test_51RfSyjQGBgXHeRkd9x4T5VH1DRLaeCk2sUXXV5mJBtC7nyqrmnejV24WhJUaT3vSrRGBn2Pm3pwpTbWoSDLyit8h008djV5HOQ
 
+## ▶️ How to Run the App
+
+### 1. **Start the backend server**
+```bash
+cd server
+npm test
+```
+### 2. **Start the frontend development server**
+
+```bash
+cd client
+npm run dev
+```
 
