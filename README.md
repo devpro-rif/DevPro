@@ -28,5 +28,14 @@ A full-stack web application built with the MERN stack that allows users to:
 ### Clone the Repository
 
 ```bash
+# 1. Clone the repository
+
 git clone https://github.com/devpro-rif/DevPro.git
 cd DevPro
+# 2. Install backend dependencies
+cd server
+npm install
+
+# 3. Install frontend dependencies
+cd ../client
+npm install
