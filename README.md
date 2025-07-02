@@ -18,7 +18,7 @@ A full-stack web application built with the MERN stack that allows users to:
 
 - Login/Register (JWT + Cookie-based)
 - Campaign listing and details
-- Contributions with payment logic
+- payment logic
 - Edit user profile (username, password, profile image)
 - Protected routes using React Context
 - Role-based navigation (LogOut shown only when logged in)
@@ -28,5 +28,5 @@ A full-stack web application built with the MERN stack that allows users to:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/DevPro.git
+git clone https://github.com/devpro-rif/DevPro.git
 cd DevPro
