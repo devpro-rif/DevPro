@@ -19,7 +19,7 @@ export default function CommunityDetailPage() {
 
   // load campaigns in that community
   useEffect(() => {
-    api.get(`/campaigns/community/${id}`)      // GET -> routerCampaign.get("/campaigns/community/:id_community")
+    api.get(`/campaigns/campaigns/community/${id}`)
        .then(({ data }) => setCampaigns(data))
        .catch(console.error);
   }, [id]);

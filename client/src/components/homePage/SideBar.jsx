@@ -1,50 +1,48 @@
-import { useEffect, useState, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { AuthContext } from "../../context/AuthProvider"; // Adjust path
+import { useEffect, useState } from "react";
+// import { Link, useLocation } from "react-router-dom";
 import { api } from "../../api"; // This is your axios instance with baseURL
 
-export default function Sidebar() {
-  const location = useLocation();
-  const { token } = useContext(AuthContext) || {};
-  const [communities, setCommunities] = useState([]);
-
-  const authToken = token || localStorage.getItem("token");
+export default function Sidebar({ onSelectCommunity, selectedCommunityId, communities: propCommunities }) {
+  const [communities, setCommunities] = useState(propCommunities || []);
 
   useEffect(() => {
-    if (!authToken) return;
-
+    if (propCommunities) {
+      setCommunities(propCommunities);
+      return;
+    }
     api
-      .get("/communities/user/communities", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
+      .get("/communities")
       .then((res) => setCommunities(res.data))
       .catch((err) => console.error("Sidebar fetch error:", err));
-  }, [authToken]);
+  }, [propCommunities]);
 
-  if (!authToken) return null;
-
+  // Always render the sidebar
   return (
     <nav className="sidebar">
       {/* Home Button */}
-      <Link to="/" className="sidebar-logo" title="Home">
+      <button
+        className={`sidebar-logo${selectedCommunityId == null ? " active" : ""}`}
+        title="Home"
+        onClick={() => onSelectCommunity(null)}
+        style={{ border: 'none', background: 'none', padding: 0, cursor: 'pointer' }}
+      >
         🌐
-      </Link>
+      </button>
 
-      {/* Joined Communities */}
+      {/* All Communities */}
       <div className="sidebar-list">
         {communities.map((c) => {
-          const active = location.pathname.includes(`/community/${c.id}`);
+          const active = selectedCommunityId === c.id;
           return (
-            <Link
+            <button
               key={c.id}
-              to={`/community/${c.id}`}
-              className={`sidebar-item ${active ? "active" : ""}`}
+              onClick={() => onSelectCommunity(c.id)}
+              className={`sidebar-item${active ? " active" : ""}`}
               title={c.name}
+              style={{ border: 'none', background: 'none', padding: 0, cursor: 'pointer' }}
             >
               <img src={c.image} alt={c.name} />
-            </Link>
+            </button>
           );
         })}
       </div>

@@ -2,56 +2,63 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import CommunityCard from "../components/homePage/CommunityCard";
 import AddCommunityModal from "../components/homePage/AddCommunityModal";
+import Sidebar from "../components/homePage/SideBar";
 import "../components/homePage/styles.css";
-import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [communities, setCommunities] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [selectedCommunityId, setSelectedCommunityId] = useState(null);
 
+  // Fetch all communities for the sidebar
   useEffect(() => {
-    api.get("/communities")               
-       .then(({ data }) => setCommunities(data))
-       .catch(console.error);
+    api.get("/communities")
+      .then(({ data }) => setCommunities(data))
+      .catch(console.error);
   }, []);
 
+  // Fetch campaigns (all or by community)
+  useEffect(() => {
+    if (selectedCommunityId) {
+      api.get(`/campaigns/campaigns/community/${selectedCommunityId}`)
+        .then(({ data }) => setCampaigns(data))
+        .catch(console.error);
+    } else {
+      api.get("/campaigns/campaigns/all")
+        .then(({ data }) => setCampaigns(data.campaigns || data))
+        .catch(console.error);
+    }
+  }, [selectedCommunityId]);
+
   const handleCreate = async (formData) => {
-    const { data: newCommunity } = await api.post("/communities", formData); // POST -> router.post('/')
+    const { data: newCommunity } = await api.post("/communities", formData);
     setCommunities((prev) => [...prev, newCommunity]);
     setShowModal(false);
   };
 
   return (
     <div className="app-shell">
-      <nav className="sidebar">
-        <Link to="/" className="sidebar-logo" title="Home">
-          🌐
-        </Link>
-        <div className="sidebar-list">
-          {communities.map((c) => (
-            <Link
-              key={c.id}
-              to={`/community/${c.id}`}
-              className="sidebar-item"
-              title={c.name}
-            >
-              <img src={c.image} alt={c.name} />
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <Sidebar
+        onSelectCommunity={setSelectedCommunityId}
+        selectedCommunityId={selectedCommunityId}
+      />
       <main className="main-area">
         <header className="page-header">
-          <h1 className="heading">Crowdfunding Communities</h1>
+          <h1 className="heading">
+            {selectedCommunityId
+              ? communities.find((c) => c.id === selectedCommunityId)?.name || "Community"
+              : "Crowdfunding Communities"}
+          </h1>
           <button className="primary" onClick={() => setShowModal(true)}>
             ➕ Add Community
           </button>
         </header>
         <section className="card-grid">
-          {communities.length === 0 ? (
-            <p className="center">No communities yet. Be the first to add one!</p>
+          {campaigns.length === 0 ? (
+            <p className="center">No campaigns yet. {selectedCommunityId ? "Be the first to add one!" : ""}</p>
           ) : (
-            communities.map((c) => <CommunityCard key={c.id} {...c} />)
+            campaigns.map((camp) => <CommunityCard key={camp.id || camp.id_campaign} {...camp} />)
           )}
         </section>
         {showModal && (

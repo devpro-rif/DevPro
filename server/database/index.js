@@ -74,13 +74,13 @@ sequelize
   });
 
 
-/*sequelize
+sequelize
   .sync({ alter: true })
   .then(() => {
     console.log("Database & tables synchronized!");
   })
   .catch((error) => {
     console.error("Error synchronizing database & tables:", error);
-   });  */
+   }); 
 
 module.exports = db;
